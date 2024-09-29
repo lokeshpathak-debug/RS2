@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Substitute Teacher Finder</title>
+    <style>
+        body {
+            font-family: 'Verdana', sans-serif;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        h1 {
+            color: #6a11cb;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #6a11cb;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #2575fc;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #218838;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        li {
+            background: #f8f9fa;
+            margin: 5px 0;
+            padding: 12px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s;
+        }
+
+        li:hover {
+            background: #e2e6ea;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Substitute Teacher Finder</h1>
+        <label for="teacherName">Enter Absent Teacher's Name:</label>
+        <input type="text" id="teacherName" placeholder="e.g., SHUBH LATA">
+        <button id="findSubstitute">Find Substitute</button>
+        <div id="errorMessage" class="error"></div>
+
+        <h2>Available Substitutes:</h2>
+        <ul id="substitutesList"></ul>
+    </div>
+    <script>
+        const teachers = [
+            { roll_no: 1, name: "SHUBH LATA", subjects: "Maths", classes: "IX B, VIII A, VIII B", Monday: "3rd:IX B, 4th:VIII A, 5th:VIII A, 6th:VIII B" },
+            { roll_no: 2, name: "RAHUL", subjects: "Science", classes: "IX A, IX C", Monday: "1st:IX A, 2nd:IX C" },
+            { roll_no: 3, name: "PRIYA", subjects: "English", classes: "VIII B", Monday: "5th:VIII B, 6th:IX A" },
+            { roll_no: 4, name: "VIKAS", subjects: "History", classes: "IX A, IX B", Monday: "2nd:IX A, 3rd:IX B" },
+            { roll_no: 5, name: "SITA", subjects: "Geography", classes: "VIII A", Monday: "1st:VIII A" },
+        ];
+
+        const findSubstitute = () => {
+            const input = document.getElementById("teacherName").value.trim();
+            const substitutesList = document.getElementById("substitutesList");
+            const errorMessage = document.getElementById("errorMessage");
+            substitutesList.innerHTML = '';
+            errorMessage.textContent = '';
+
+            const absentTeacher = teachers.find(teacher => teacher.name === input);
+
+            if (!absentTeacher) {
+                errorMessage.textContent = "Teacher not found. Please enter a valid name.";
+                return;
+            }
+
+            const absentPeriods = absentTeacher.Monday.split(',').map(period => period.split(':')[0]);
+
+            const availableSubstitutes = teachers.filter(substitute => {
+                return !absentPeriods.some(period => {
+                    return substitute.Monday.includes(period);
+                });
+            });
+
+            if (availableSubstitutes.length === 0) {
+                substitutesList.innerHTML = '<li>No available substitutes found.</li>';
+            } else {
+                availableSubstitutes.forEach(substitute => {
+                    const li = document.createElement("li");
+                    li.textContent = substitute.name;
+                    substitutesList.appendChild(li);
+                });
+            }
+        };
+
+        document.getElementById("findSubstitute").addEventListener("click", findSubstitute);
+    </script>
+</body>
+</html>
